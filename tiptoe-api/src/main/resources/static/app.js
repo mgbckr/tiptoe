@@ -18,8 +18,14 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/greetings', function (greeting) {
-            showGreeting(JSON.parse(greeting.body).content);
+        
+        stompClient.subscribe('/topic/library', function (response) {
+        	library(JSON.parse(response.body).content);
+        });
+        
+
+        stompClient.subscribe('/topic/player', function (response) {
+        	player(JSON.parse(response.body).content);
         });
     });
 }
@@ -32,12 +38,16 @@ function disconnect() {
     console.log("Disconnected");
 }
 
-function sendName() {
-    stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
+function getSongs() {
+    stompClient.send("/app/songs", {});
 }
 
-function showGreeting(message) {
-    $("#greetings").append("<tr><td>" + message + "</td></tr>");
+function play() {
+    stompClient.send("/app/player/play", {}, JSON.stringify({'songId': $("#name").val()}));
+}
+
+function library(message) {
+	console.log(message);
 }
 
 $(function () {
@@ -46,5 +56,6 @@ $(function () {
     });
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendName(); });
+    $( "#send" ).click(function() { play(); });
+    $( "#songs" ).click(function() { getSongs(); });
 });

@@ -3,6 +3,11 @@ package net.mgbckr.tiptoe.player.simple;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
 
 import javazoom.jl.decoder.JavaLayerException;
 import net.mgbckr.tiptoe.player.Player;
@@ -22,8 +27,15 @@ public class SimplePlayer implements Player {
 	}
 	
 	@Override
-	public void load(File file) {
-		this.file = file;
+	public void load(InputStream stream) throws IOException {
+		
+	    byte[] buffer = new byte[stream.available()];
+	    stream.read(buffer);
+	 
+	    this.file = File.createTempFile("tmp-song", UUID.randomUUID().toString());
+	    OutputStream outStream = new FileOutputStream(this.file);
+	    outStream.write(buffer);
+	    outStream.close();
 	}
 	
 	@Override

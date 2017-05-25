@@ -17,6 +17,12 @@
 
 		<dependency>
 			<groupId>net.mgbckr.tiptoe</groupId>
+			<artifactId>tiptoe-library</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.mgbckr.tiptoe</groupId>
 			<artifactId>tiptoe-player</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

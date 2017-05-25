@@ -17,5 +17,6 @@
 	<modules>
 		<module>tiptoe-player</module>
 		<module>tiptoe-api</module>
+		<module>tiptoe-library</module>
 	</modules>
 </project>
