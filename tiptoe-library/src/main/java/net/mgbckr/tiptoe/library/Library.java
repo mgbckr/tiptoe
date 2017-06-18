@@ -8,5 +8,7 @@ public interface Library {
 	public Song getSong(String id);
 	public InputStream loadSong(String id) throws IOException;
 	
-	public Songs getSongs(int offset, int limit);
+	public Page getAllSongs();
+
+	public Page getPage(String id);
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import net.mgbckr.tiptoe.library.Library;
-import net.mgbckr.tiptoe.library.folder.FolderLibrary;
+import net.mgbckr.tiptoe.library.folder.FilesystemLibrary;
 import net.mgbckr.tiptoe.player.Player;
 import net.mgbckr.tiptoe.player.simple.SimplePlayer;
 
@@ -23,7 +23,7 @@ public class Application {
     
     @Bean
     public Library getLibrary() {
-    	return new FolderLibrary("src/main/resources/samples");
+    	return new FilesystemLibrary("src/main/resources/samples");
     }
     
 }

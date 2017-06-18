@@ -59,13 +59,14 @@ public class SimplePlayer implements Player {
 	}
 
 	@Override
-	public void resume() {
-		player.resume();
-	}
-	
-	@Override
 	public void stop() {
 		player.stop();
+	}
+
+	@Override
+	public int getDuration() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

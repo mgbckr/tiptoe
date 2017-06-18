@@ -3,10 +3,13 @@ package net.mgbckr.tiptoe.player.simple;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class TestSimplePlayer {
+import net.mgbckr.tiptoe.player.Player;
+import net.mgbckr.tiptoe.player.javafx.JavaFxPlayer;
+
+public class TestJavaFxPlayer {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		
-		SimplePlayer player = new SimplePlayer();
+		Player player = new JavaFxPlayer();
 		player.load(new FileInputStream("src/test/resources/samples/celebrity.mp3"));
 		player.play();
 		Thread.sleep(4000);

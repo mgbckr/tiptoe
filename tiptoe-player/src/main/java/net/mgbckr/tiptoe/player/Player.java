@@ -6,9 +6,11 @@ import java.io.InputStream;
 public interface Player {
 
 	void load(InputStream file) throws IOException;
+	
+	int getDuration();
+	
 	void play();
 	void stop();
 	void pause();
-	void resume();
 	
 }

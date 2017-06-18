@@ -1,32 +1,22 @@
 var stompClient = null;
 
-function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
-    if (connected) {
-        $("#conversation").show();
-    }
-    else {
-        $("#conversation").hide();
-    }
-    $("#greetings").html("");
-}
-
 function connect() {
     var socket = new SockJS('/gs-guide-websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
-        setConnected(true);
+    	
         console.log('Connected: ' + frame);
         
         stompClient.subscribe('/topic/library', function (response) {
-        	library(JSON.parse(response.body).content);
+        	library(JSON.parse(response.body));
         });
         
 
         stompClient.subscribe('/topic/player', function (response) {
-        	player(JSON.parse(response.body).content);
+        	player(JSON.parse(response.body));
         });
+
+    	getSongs()
     });
 }
 
@@ -34,28 +24,63 @@ function disconnect() {
     if (stompClient != null) {
         stompClient.disconnect();
     }
-    setConnected(false);
     console.log("Disconnected");
 }
 
 function getSongs() {
-    stompClient.send("/app/songs", {});
+    stompClient.send("/app/library", {}, "{}");
 }
 
 function play() {
-    stompClient.send("/app/player/play", {}, JSON.stringify({'songId': $("#name").val()}));
+    stompClient.send(
+    		"/app/player/play", 
+    		{}, 
+    		JSON.stringify({'songId': $("#name").val()}));
 }
 
-function library(message) {
+function stop() {
+	console.log("stop")
+    stompClient.send(
+    		"/app/player/stop", 
+    		{});
+}
+
+function library(message) {	
 	console.log(message);
+	
+	$("#library-folders tbody").html("");
+	$.each(message.subpages, function(k, page) {
+		var row = $('<tr><td>' + page.name + '</td></tr>')
+		row.on('click', function() {
+		    stompClient.send("/app/library", {}, JSON.stringify({ 'id': page.id }));
+		})
+		$("#library-folders tbody").append(row);
+	});
+	
+	$("#library-songs tbody").html("");
+	$.each(message.songs, function(k, song) {
+		
+		var row = $(
+			'<tr class="song" data-id="' + song.id + '">' +
+				'<td>' + song.title + '</td>' +
+				'<td>' + song.artist + '</td>' +
+				'<td>' + song.album + '</td>' +
+				'<td class="play">Play</td>' +
+			'</tr>')
+		
+		row.find(".play").on("click", function() {
+
+		    stompClient.send(
+		    		"/app/player/play", 
+		    		{}, 
+		    		JSON.stringify({'songId': song.id}));
+		})
+		
+		$("#library-songs tbody").append(row);
+	});
 }
 
 $(function () {
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { play(); });
-    $( "#songs" ).click(function() { getSongs(); });
+	connect()
+    $( "#stop" ).click(function() { stop(); });
 });
