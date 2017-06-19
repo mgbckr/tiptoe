@@ -5,12 +5,25 @@ import java.io.InputStream;
 
 public interface Player {
 
-	void load(InputStream file) throws IOException;
-	
-	int getDuration();
+	void load(InputStream in) throws IOException;
+	SongInfo getSongInfo();
 	
 	void play();
 	void stop();
 	void pause();
+	
+	public static class SongInfo {
+		
+		private Class<? extends Player> playerType;
+		
+		public SongInfo(Class<? extends Player> playerType) {
+			this.playerType = playerType;
+		}
+		
+		public Class<? extends Player> getPlayerType() {
+			return this.playerType;
+		}
+		
+	}
 	
 }

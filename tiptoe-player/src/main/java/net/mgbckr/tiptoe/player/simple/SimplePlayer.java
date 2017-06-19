@@ -39,15 +39,20 @@ public class SimplePlayer implements Player {
 	}
 	
 	@Override
+	public SongInfo getSongInfo() {
+		return new SongInfo(SimplePlayer.class);
+	}
+	
+	@Override
 	public void play() {
 		
-		if (player != null)
-			player.close();
+		if (this.player != null)
+			this.player.close();
 		
 		initPlayer();
 		
 		try {
-			player.play();
+			this.player.play();
 		} catch (JavaLayerException e) {
 			throw new RuntimeException(e);
 		}
@@ -55,18 +60,14 @@ public class SimplePlayer implements Player {
 
 	@Override
 	public void pause() {
-		player.pause();				
+		this.player.pause();				
 	}
 
 	@Override
 	public void stop() {
-		player.stop();
+		this.player.stop();
 	}
+	
 
-	@Override
-	public int getDuration() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
 
 }

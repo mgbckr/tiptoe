@@ -23,6 +23,14 @@
 			<version>1.0.1</version>
 		</dependency>
 
+		<dependency>
+			<groupId>beads</groupId>
+			<artifactId>beads-libraray</artifactId>
+			<version>2017.05.02</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/libs/beads.jar</systemPath>
+		</dependency>
+
 	</dependencies>
 
 	<build>

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import net.mgbckr.tiptoe.library.Library;
 import net.mgbckr.tiptoe.library.folder.FilesystemLibrary;
 import net.mgbckr.tiptoe.player.Player;
-import net.mgbckr.tiptoe.player.simple.SimplePlayer;
+import net.mgbckr.tiptoe.player.beads.BeadsPlayer;
 
 @SpringBootApplication
 public class Application {
@@ -18,7 +18,7 @@ public class Application {
     
     @Bean
     public Player getPlayer() {
-    	return new SimplePlayer();
+    	return new BeadsPlayer();
     }
     
     @Bean
