@@ -57,7 +57,7 @@ public class SimplePlayer implements Player {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	@Override
 	public void pause() {
 		this.player.pause();				

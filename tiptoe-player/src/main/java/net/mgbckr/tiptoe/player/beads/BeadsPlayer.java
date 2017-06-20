@@ -15,6 +15,8 @@ import net.mgbckr.tiptoe.player.Players;
 
 public class BeadsPlayer implements Player {
 	
+	public static final int WAVE_WIDTH = 500;
+	
 	private AudioContext ac;
 	private SamplePlayer player;
 	
@@ -28,7 +30,6 @@ public class BeadsPlayer implements Player {
 		File file = Players.createTmpFile(in);
 		
 		Sample sample = SampleManager.sample(file.getAbsolutePath());
-		System.out.println(sample.getNumFrames());
 		
 		this.player = new SamplePlayer(this.ac, sample);
 		this.player.pause(true);
@@ -41,6 +42,12 @@ public class BeadsPlayer implements Player {
 	@Override
 	public void play() {
 		this.player.pause(false);	
+	}
+	
+	@Override
+	public void play(double milliseconds) {
+		this.player.setPosition(milliseconds);
+		this.play();
 	}
 
 	@Override
@@ -92,14 +99,38 @@ public class BeadsPlayer implements Player {
 
 	@Override
 	public SongInfo getSongInfo() {
+		
 		BeadsPlayerInfo info = new BeadsPlayerInfo();
+		
+		// length
 		info.setLength(this.player.getSample().getLength());
+		
+		// wave
+		double[] wave = new double[WAVE_WIDTH];
+		Sample sample = this.player.getSample();
+		float[] frame = new float[sample.getNumChannels()];
+		double step = sample.getNumFrames() / (double) WAVE_WIDTH;
+		
+		for (int i = 0; i < WAVE_WIDTH; i ++) {
+			
+			double sum = 0;
+			for (int j = 0; j < step; j ++) {
+				sample.getFrame((int) (i * step + j), frame);
+				sum += Math.abs(frame[0]);
+			}
+			wave[i] = sum / step;
+		}
+
+		info.setWave(wave);
+		
+		// return
 		return info;
 	}
 	
 	public static class BeadsPlayerInfo extends SongInfo {
 
 		private double length;
+		private double[] wave;
 		
 		public BeadsPlayerInfo() {
 			super(BeadsPlayer.class);
@@ -111,6 +142,14 @@ public class BeadsPlayer implements Player {
 		
 		public void setLength(double length) {
 			this.length = length;
+		}
+		
+		public double[] getWave() {
+			return wave;
+		}
+		
+		public void setWave(double[] wave) {
+			this.wave = wave;
 		}
 		
 	}

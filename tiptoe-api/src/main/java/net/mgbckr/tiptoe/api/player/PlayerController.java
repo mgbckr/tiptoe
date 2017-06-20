@@ -32,8 +32,14 @@ public class PlayerController {
 	
 	@MessageMapping("/player/play")
     @SendTo("/topic/player")
-    public Message play() throws Exception {
-		this.player.play();
+    public Message play(PlayCommand play) throws Exception {
+		
+		if (play.getStartTime() >= 0) {
+			this.player.play(play.getStartTime());
+		} else {
+			this.player.play();
+		}
+		
 		return new Message("playing", null);
     }
 	

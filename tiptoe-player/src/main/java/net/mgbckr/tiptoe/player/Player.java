@@ -9,6 +9,10 @@ public interface Player {
 	SongInfo getSongInfo();
 	
 	void play();
+	default void play(double milliseconds) {
+		throw new UnsupportedOperationException();
+	}
+
 	void stop();
 	void pause();
 	
@@ -25,5 +29,6 @@ public interface Player {
 		}
 		
 	}
+
 	
 }
