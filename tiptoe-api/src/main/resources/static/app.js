@@ -145,9 +145,9 @@ function plot(length, wave) {
 	};
 	
 	// set the dimensions and margins of the graph
-	var margin = {top: 20, right: 20, bottom: 30, left: 20},
+	var margin = {top: 20, right: 20, bottom: 60, left: 20},
 	    width = 960 - margin.left - margin.right,
-	    height = 70 - margin.top - margin.bottom;
+	    height = 30;
 
 	// set the ranges
 	x = d3.scaleLinear().range([0, width]);
@@ -169,14 +169,6 @@ function plot(length, wave) {
 	    .attr("transform",
 	          "translate(" + margin.left + "," + margin.top + ")");
 
-	svg.on("click", function() {
-		var coordinates = d3.mouse(this)
-		console.log(coordinates)
-		var xValue = x.invert(coordinates[0])
-		console.log(xValue)
-		playAt(xValue)
-	});
-	
 	// Get the data
 
 	// format the data
@@ -196,7 +188,14 @@ function plot(length, wave) {
 	svg.append("path")
 	    .data([data])
 	    .attr("class", "line")
-	    .attr("d", valueline);
+	    .attr("d", valueline)
+	    .on("click", function() {
+			var coordinates = d3.mouse(this)
+			console.log(coordinates)
+			var xValue = x.invert(coordinates[0])
+			console.log(xValue)
+			playAt(xValue)
+		});;
 
 	// Add the X Axis
 	svg.append("g")
@@ -204,7 +203,8 @@ function plot(length, wave) {
 	    .call(d3.axisBottom(x)
 	    		  .tickFormat(formatMinutes));
 
-	var line = svg.append("line")
+	// focus
+	var focus = svg.append("line")
     	.attr("class", "focus")
 		.attr("x1", x(0))  //<<== change your code here
 		.attr("y1", 0)
@@ -213,6 +213,34 @@ function plot(length, wave) {
 		.style("stroke-width", 2)
 		.style("stroke", "red")
 		.style("fill", "none");
+	
+	// cues
+	var focus = svg.append("line")
+		.attr("class", "cues")
+		.attr("x1", x(0))  //<<== change your code here
+		.attr("y1", height + 30)
+		.attr("x2", x(length))  //<<== and here
+		.attr("y2", height + 30)
+		.style("stroke-width", 10)
+		.style("stroke", "red")
+		.style("fill", "none")
+		.on('click', function() {
+			var coordinates = d3.mouse(this)
+			console.log(coordinates)
+			var xValue = x.invert(coordinates[0])
+			console.log(xValue)
+			svg.append("rect")
+				.attr("x", coordinates[0])
+				.attr("y", height + 30)
+				.attr('width', 20)
+				.attr('height', 20)
+				.attr('class', 'cue')
+				.attr('fill', 'green')
+				.on('click', function() {
+					console.log("clicked: " + xValue)
+					playAt(xValue)
+				})
+		});
 	
 }
 
