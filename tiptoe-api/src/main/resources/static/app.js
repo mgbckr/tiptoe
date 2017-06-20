@@ -214,6 +214,39 @@ function plot(length, wave) {
 		.style("stroke", "red")
 		.style("fill", "none");
 	
+	// cue dragging
+	var drag = d3.drag()
+	  .on('start', dragstarted)
+	  .on('drag', dragged)
+	  .on('end', dragended);
+	
+	function dragstarted() {
+		
+	}
+	
+	function dragged() {
+	    var xDiff = d3.event.dx;
+	    console.log(xDiff)
+	    
+	    var cue = d3.select(this);
+	    console.log(cue)
+	    console.log(cue.attr('x'))
+	    
+	    
+	    var newX = parseInt(cue.attr('x')) + xDiff;
+	    var newTime = x.invert(newX)
+	    cue.attr('x', newX);
+	    cue
+		    .on('click', function() {
+				console.log("clicked: " + newTime)
+				playAt(newTime)
+			})
+	}
+	
+	function dragended() {
+		
+	}
+	
 	// cues
 	var focus = svg.append("line")
 		.attr("class", "cues")
@@ -240,6 +273,7 @@ function plot(length, wave) {
 					console.log("clicked: " + xValue)
 					playAt(xValue)
 				})
+				.call(drag)
 		});
 	
 }
