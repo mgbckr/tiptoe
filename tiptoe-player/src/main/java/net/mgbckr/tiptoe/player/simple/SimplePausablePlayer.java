@@ -9,11 +9,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import javax.lang.model.type.NullType;
+
 import javazoom.jl.decoder.JavaLayerException;
-import net.mgbckr.tiptoe.player.Player;
+import net.mgbckr.tiptoe.player.SimplePlayer;
 import net.mgbckr.tiptoe.player.jlayer.PausablePlayer;
 
-public class SimplePlayer implements Player {
+public class SimplePausablePlayer implements SimplePlayer {
 
 	private File file;
 	private PausablePlayer player = null;
@@ -27,7 +29,7 @@ public class SimplePlayer implements Player {
 	}
 	
 	@Override
-	public void load(InputStream stream) throws IOException {
+	public NullType load(InputStream stream) throws IOException {
 		
 	    byte[] buffer = new byte[stream.available()];
 	    stream.read(buffer);
@@ -36,11 +38,8 @@ public class SimplePlayer implements Player {
 	    OutputStream outStream = new FileOutputStream(this.file);
 	    outStream.write(buffer);
 	    outStream.close();
-	}
-	
-	@Override
-	public SongInfo getSongInfo() {
-		return new SongInfo(SimplePlayer.class);
+	    
+	    return null;
 	}
 	
 	@Override

@@ -6,3 +6,6 @@
 
 # Visualization
 * Visualizing waveforms via beads https://github.com/moumar/beads/blob/master/src/beads_player/net/beadsproject/beads/gui/SampleView.java
+
+# TODO
+* Add spawnable players to allow for the player frontend to provide crossfading etc.

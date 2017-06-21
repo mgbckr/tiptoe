@@ -9,19 +9,21 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import javax.lang.model.type.NullType;
+
 import javafx.application.Application;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import net.mgbckr.tiptoe.player.Player;
 
-public class JavaFxPlayer extends Application implements Player {
+public class JavaFxPlayer extends Application implements Player<NullType, NullType> {
 
 	private File mediaFile;
 	private MediaPlayer player;
 	
 	@Override
-	public void load(InputStream in) throws IOException {
+	public NullType load(InputStream in) throws IOException {
 
 		this.mediaFile = File.createTempFile("tmp-", UUID.randomUUID().toString());
 
@@ -30,6 +32,8 @@ public class JavaFxPlayer extends Application implements Player {
 		
 		Files.copy(in, mediaFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 //		launch();
+		
+		return null;
 		
 	}
 
@@ -67,11 +71,6 @@ public class JavaFxPlayer extends Application implements Player {
 		player.stop();
 		Thread.sleep(2000);
 		player.play();
-	}
-
-	@Override
-	public SongInfo getSongInfo() {
-		return new SongInfo(JavaFxPlayer.class);
 	}
 
 }

@@ -97,18 +97,17 @@ function play() {
 	}, focusStep);
 }
 
-function playAt(milliseconds) {
-	
-	console.log("play")
+function setPosition(milliseconds) {
+	console.log("set position")
+	d3.select(".focus").attr("transform", 'translate(' + x(milliseconds) + ',0)')
     stompClient.send(
-    		"/app/player/play", {}, JSON.stringify({ startTime: milliseconds }));
-
-	clearInterval(focusInterval)
+    		"/app/player/message", {}, JSON.stringify({ 
+    			type: 'setPosition',
+    			properties: {
+    				position: milliseconds
+    			}
+    		}));
 	focusCurrentTime = milliseconds
-	focusInterval = setInterval(function() {
-		focusCurrentTime += focusStep
-		d3.select(".focus").attr("transform", 'translate(' + x(focusCurrentTime) + ',0)')
-	}, focusStep);
 }
 
 function stop() {
@@ -190,11 +189,14 @@ function plot(length, wave) {
 	    .attr("class", "line")
 	    .attr("d", valueline)
 	    .on("click", function() {
+	    	
 			var coordinates = d3.mouse(this)
 			console.log(coordinates)
+			
 			var xValue = x.invert(coordinates[0])
 			console.log(xValue)
-			playAt(xValue)
+			
+			setPosition(xValue)
 		});;
 
 	// Add the X Axis
@@ -239,12 +241,13 @@ function plot(length, wave) {
 	    cue
 		    .on('click', function() {
 				console.log("clicked: " + newTime)
-				playAt(newTime)
+				setPosition(newTime)
 			})
 	}
 	
 	function dragended() {
-		
+	    var yDiff = d3.event.dy;
+	    console.log(yDiff)
 	}
 	
 	// cues
@@ -271,7 +274,7 @@ function plot(length, wave) {
 				.attr('fill', 'green')
 				.on('click', function() {
 					console.log("clicked: " + xValue)
-					playAt(xValue)
+					setPosition(xValue)
 				})
 				.call(drag)
 		});

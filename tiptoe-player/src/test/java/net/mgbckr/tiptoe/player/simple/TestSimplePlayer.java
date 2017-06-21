@@ -6,7 +6,7 @@ import java.io.IOException;
 public class TestSimplePlayer {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		
-		SimplePlayer player = new SimplePlayer();
+		SimplePausablePlayer player = new SimplePausablePlayer();
 		player.load(new FileInputStream("src/test/resources/samples/celebrity.mp3"));
 		
 		player.play();
