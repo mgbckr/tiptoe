@@ -38,7 +38,7 @@ public interface Interactive {
 		
 		public void setProperties(Map<String, Object> properties) {
 			for (Object o : properties.values()) {
-				if (!(o instanceof String) && !(o instanceof Double)) {
+				if (!(o instanceof String) && !(o instanceof Integer) && !(o instanceof Double)) {
 					throw new IllegalArgumentException("Values must be Strings or Doubles.");
 				}
 			}
@@ -46,6 +46,10 @@ public interface Interactive {
 		}
 		
 		public void put(String key, String value) {
+			this.properties.put(key, value);
+		}
+		
+		public void put(String key, int value) {
 			this.properties.put(key, value);
 		}
 		
@@ -57,8 +61,23 @@ public interface Interactive {
 			return (String) this.properties.get(key);
 		}
 		
+		public int retrieveInt(String key) {
+			Object o = this.properties.get(key);
+			if (!(o instanceof Integer)) {
+				throw new IllegalStateException(o + " is not an Integer.");
+			}
+			return (int) o;
+		}
+		
 		public double retrieveDouble(String key) {
-			return (double) this.properties.get(key);
+			Object o = this.properties.get(key);
+			if (o instanceof Integer) {
+				return ((Integer) o).doubleValue();
+			} else if (!(o instanceof Double)) {
+				throw new IllegalStateException(o + " is not a Double.");
+			} else {
+				return (double) this.properties.get(key);
+			}
 		}
 		
 		

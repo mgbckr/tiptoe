@@ -330,7 +330,7 @@ $(function () {
     $( "#speed span" ).click(function() { 
     	$("#speed input").val("1")
     	console.log("set speed: " + speed)
-    	setSpeed(1.00001); 
+    	setSpeed(1); 
     })
     $( "#speed input" ).change(function() { 
     	var speed = $(this).val()
@@ -341,7 +341,7 @@ $(function () {
     $( "#pitch span" ).click(function() { 
     	$("#pitch input").val("1")
     	console.log("set pitch: " + pitch)
-    	setPitch(1.00001); 
+    	setPitch(1); 
     })
     $( "#pitch input" ).change(function() { 
     	var pitch = $(this).val()
