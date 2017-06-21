@@ -71,12 +71,13 @@ public class BeadsPlayer
 	}
 	
 	@Override
-	public double getRate() {
+	public double getSpeed() {
 		return this.player.getRateUGen().getValueDouble();
 	}
 	
 	@Override
-	public void setRate(double rate, boolean tryToKeepPitch) {
+	public void setSpeed(double rate, boolean tryToKeepPitch) {
+		System.out.println("test");
 		this.player.setRate(new Glide(this.ac, (float) rate)); 
 	}
 	

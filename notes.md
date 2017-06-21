@@ -8,4 +8,8 @@
 * Visualizing waveforms via beads https://github.com/moumar/beads/blob/master/src/beads_player/net/beadsproject/beads/gui/SampleView.java
 
 # TODO
+* Rate (rename to speed)
+* Pitch
+* add message ids so that the frontend knows what it is getting back 
+* Update position of focus via web sockets which should make it easier in case of pitch, etc
 * Add spawnable players to allow for the player frontend to provide crossfading etc.

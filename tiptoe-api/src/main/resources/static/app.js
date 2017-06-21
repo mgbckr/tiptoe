@@ -110,6 +110,28 @@ function setPosition(milliseconds) {
 	focusCurrentTime = milliseconds
 }
 
+function setSpeed(speed) {
+	console.log("set speed")
+    stompClient.send(
+    		"/app/player/message", {}, JSON.stringify({ 
+    			type: 'setSpeed',
+    			properties: {
+    				speed: speed
+    			}
+    		}));
+}
+
+function setPitch(pitch) {
+	console.log("set pitch")
+    stompClient.send(
+    		"/app/player/message", {}, JSON.stringify({ 
+    			type: 'setPitch',
+    			properties: {
+    				pitch: pitch
+    			}
+    		}));
+}
+
 function stop() {
 	console.log("stop")
 	d3.select(".focus").attr("transform", 'translate(' + x(0) + ',0)')
@@ -304,4 +326,26 @@ $(function () {
     $( "#play" ).click(function() { play(); })
     $( "#pause" ).click(function() { pause(); })
     $( "#stop" ).click(function() { stop(); })
+    
+    $( "#speed span" ).click(function() { 
+    	$("#speed input").val("1")
+    	console.log("set speed: " + speed)
+    	setSpeed(1.00001); 
+    })
+    $( "#speed input" ).change(function() { 
+    	var speed = $(this).val()
+    	console.log("set speed: " + speed)
+    	setSpeed(parseFloat(speed)); 
+    })
+    
+    $( "#pitch span" ).click(function() { 
+    	$("#pitch input").val("1")
+    	console.log("set pitch: " + pitch)
+    	setPitch(1.00001); 
+    })
+    $( "#pitch input" ).change(function() { 
+    	var pitch = $(this).val()
+    	console.log("set pitch: " + pitch)
+    	setPitch(parseFloat(pitch)); 
+    })
 });

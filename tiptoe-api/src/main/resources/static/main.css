@@ -1,0 +1,9 @@
+#player div {
+	display: inline-block;
+}
+
+#player input {
+	display: inline-block;
+	width: 100px;
+	margin-left: 20px;
+}

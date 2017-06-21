@@ -6,10 +6,10 @@ public interface AdvancedPlayer<TSongInfo, TPlayerInfo>
 	double getPosition();
 	void setPosition(double position);
 	
-	double getRate();
-	void setRate(double rate, boolean tryToKeepPitch);
-	default void setRate(double rate) {
-		this.setRate(rate, true);
+	double getSpeed();
+	void setSpeed(double rate, boolean tryToKeepPitch);
+	default void setSpeed(double rate) {
+		this.setSpeed(rate, true);
 	}
 	
 	double getPitch();
