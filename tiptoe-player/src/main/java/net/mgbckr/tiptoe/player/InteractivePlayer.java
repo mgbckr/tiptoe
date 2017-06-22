@@ -10,19 +10,19 @@ public interface InteractivePlayer<TSongInfo, TPlayerInfo>
 	public static String COMMAND_STOP = "stop";
 	
 	@Override
-	default Message sendMessage(Message message) 
+	default Object request(Action action) 
 			throws OperationNotSupportedException {
 		
-		switch (message.getType()) {
+		switch (action.getType()) {
 		case COMMAND_PLAY:
 			this.play();
-			return new Message();
+			return null;
 		case COMMAND_PAUSE:
 			this.pause();
-			return new Message();
+			return null;
 		case COMMAND_STOP:
 			this.stop();
-			return new Message();
+			return null;
 		default:
 			throw new OperationNotSupportedException();
 		}

@@ -8,22 +8,20 @@ import javax.naming.OperationNotSupportedException;
 
 public interface Interactive {
 	
-	public static final String VALUE = "value";
-	
-	default Message sendMessage(Message message) throws OperationNotSupportedException {
+	default Object request(Action message) throws OperationNotSupportedException {
 		throw new OperationNotSupportedException();
 	}
 
-	public static class Message {
+	public static class Action {
 		
 		private String type;
 		private Map<String, Object> properties;
 		
-		public Message() {
+		public Action() {
 			this("none");
 		}
 		
-		public Message(String type) {
+		public Action(String type) {
 			this.type = type;
 			this.properties = new HashMap<>();
 		}
@@ -79,7 +77,5 @@ public interface Interactive {
 				return (double) this.properties.get(key);
 			}
 		}
-		
-		
 	}
 }

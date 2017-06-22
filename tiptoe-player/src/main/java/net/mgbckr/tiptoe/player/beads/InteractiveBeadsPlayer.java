@@ -4,6 +4,6 @@ import net.mgbckr.tiptoe.player.InteractiveAdvancedPlayer;
 
 public class InteractiveBeadsPlayer 
 		extends BeadsPlayer 
-		implements InteractiveAdvancedPlayer<BeadsPlayer.SongInfo, BeadsPlayer.PlayerInfo>{
+		implements InteractiveAdvancedPlayer<BeadsPlayer.SongInfo, BeadsPlayer.PlayerStatus>{
 
 }

@@ -5,7 +5,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import net.mgbckr.tiptoe.api.model.Message;
+import net.mgbckr.tiptoe.api.model.Response;
 import net.mgbckr.tiptoe.library.Library;
 
 @Controller
@@ -16,11 +16,11 @@ public class LibraryController {
 	
 	@MessageMapping("/library")
     @SendTo("/topic/library")
-    public Message getPage(PageCommand pageCommand) throws Exception {
+    public Response getPage(PageCommand pageCommand) throws Exception {
 		if (pageCommand == null) {
-			return new Message("page", this.library.getPage(null));
+			return new Response("page", this.library.getPage(null));
 		} else {
-			return new Message("page", this.library.getPage(pageCommand.getId()));
+			return new Response("page", this.library.getPage(pageCommand.getId()));
 		}
     }
 

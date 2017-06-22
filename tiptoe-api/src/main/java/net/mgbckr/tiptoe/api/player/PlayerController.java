@@ -9,9 +9,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import net.mgbckr.tiptoe.api.model.Message;
+import net.mgbckr.tiptoe.api.model.Response;
 import net.mgbckr.tiptoe.library.Library;
-import net.mgbckr.tiptoe.player.Interactive;
+import net.mgbckr.tiptoe.player.Interactive.Action;
 import net.mgbckr.tiptoe.player.InteractivePlayer;
 
 @Controller
@@ -25,47 +25,47 @@ public class PlayerController {
 	
 	@MessageMapping("/player/info")
     @SendTo("/topic/player")
-    public Message info() throws Exception {
-		return new Message("status", this.player.getPlayerInfo());
+    public Response info() throws Exception {
+		return new Response("info", this.player.getPlayerStatus());
     }
 	
 	@MessageMapping("/player/load")
     @SendTo("/topic/player")
-    public Message load(LoadCommand load) throws Exception {
+    public Response load(LoadCommand load) throws Exception {
 		InputStream song = this.library.loadSong(load.getSongId());
 		Object songInfo = this.player.load(song);
-		return new Message("loaded", songInfo);
+		return new Response("loaded", songInfo);
     }
 	
 	@MessageMapping("/player/play")
     @SendTo("/topic/player")
-    public Message play() throws Exception {
+    public Response play() throws Exception {
 		this.player.play();
-		return new Message("playing", null);
+		return new Response("playing", null);
     }
 	
 	@MessageMapping("/player/pause")
     @SendTo("/topic/player")
-    public Message pause() throws Exception {
+    public Response pause() throws Exception {
 		this.player.pause();
-		return new Message("paused", null);
+		return new Response("paused", null);
     }
 	
 	@MessageMapping("/player/stop")
     @SendTo("/topic/player")
-    public Message stop() throws Exception {
+    public Response stop() throws Exception {
 		this.player.stop();
-		return new Message("stopped", null);
+		return new Response("stopped", null);
     }
 	
-	@MessageMapping("/player/message")
+	@MessageMapping("/player/action")
     @SendTo("/topic/player")
-    public Message command(Interactive.Message message) throws Exception {
+    public Response action(Action action) throws Exception {
 		try {
-			Interactive.Message response = this.player.sendMessage(message);
-			return new Message("command", response);
+			Object response = this.player.request(action);
+			return new Response(action.getType(), response);
 		} catch (OperationNotSupportedException e) {
-			return new Message("command", "fail");
+			return new Response(action.getType(), false);
 		}
     }
 }

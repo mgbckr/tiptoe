@@ -81,75 +81,27 @@ function load(songId) {
 		JSON.stringify({'songId': songId}));
 }
 
-var focusStep = 200; // ms
-var focusInterval = null;
-var focusCurrentTime = 0;
 function play() {
-	
 	console.log("play")
     stompClient.send(
     		"/app/player/play", {}, JSON.stringify({}));
-	
-	clearInterval(focusInterval)
-	focusInterval = setInterval(function() {
-		focusCurrentTime += focusStep
-		d3.select(".focus").attr("transform", 'translate(' + x(focusCurrentTime) + ',0)')
-	}, focusStep);
-}
-
-function setPosition(milliseconds) {
-	console.log("set position")
-	d3.select(".focus").attr("transform", 'translate(' + x(milliseconds) + ',0)')
-    stompClient.send(
-    		"/app/player/message", {}, JSON.stringify({ 
-    			type: 'setPosition',
-    			properties: {
-    				position: milliseconds
-    			}
-    		}));
-	focusCurrentTime = milliseconds
-}
-
-function setSpeed(speed) {
-	console.log("set speed")
-    stompClient.send(
-    		"/app/player/message", {}, JSON.stringify({ 
-    			type: 'setSpeed',
-    			properties: {
-    				speed: speed
-    			}
-    		}));
-}
-
-function setPitch(pitch) {
-	console.log("set pitch")
-    stompClient.send(
-    		"/app/player/message", {}, JSON.stringify({ 
-    			type: 'setPitch',
-    			properties: {
-    				pitch: pitch
-    			}
-    		}));
 }
 
 function stop() {
 	console.log("stop")
 	d3.select(".focus").attr("transform", 'translate(' + x(0) + ',0)')
-	clearInterval(focusInterval)
-	focusCurrentTime = 0
     stompClient.send(
     		"/app/player/stop");
 }
 
 function pause() {
 	console.log("pause")
-	clearInterval(focusInterval)
     stompClient.send(
     		"/app/player/pause");
 }
 
-var x;
-var y;
+var x = function() { return 0; };
+var y = function() { return 0; };
 function plot(length, wave) {
 	
 	formatMinutes = function(d) { 
@@ -303,7 +255,7 @@ function plot(length, wave) {
 	
 }
 
-function player(message) {
+function player(response) {
 	
 	function loaded(info) {
 		console.log('loaded')
@@ -311,41 +263,121 @@ function player(message) {
 	}
 	
 	console.log("Received player message:")
-	console.log(message);
+	console.log(response);
 	
-	if (!message.type.localeCompare('loaded')) {
+	if (!response.type.localeCompare('loaded')) {
 		console.log('Recognized "loaded" message.')
-		loaded(message.content)
+		loaded(response.content)
+	} else if (!response.type.localeCompare('setPitch')) {
+		console.log('Recognized "pitchChanged" message.')
+//		pitchChanged(response.content)
+	} else if (!response.type.localeCompare('setSpeed')) {
+		console.log('Recognized "speedChanged" message.')
+//		speedChanged(response.content)
+	} else if (!response.type.localeCompare('setPosition')) {
+		console.log('Recognized "positionChanged" message.')
+//		positionChanged(response.content)
+	} else if (!response.type.localeCompare('event')) {
+		console.log('Recognized "event" message.')
+		handleEvent(response.content)
 	} else {
-		console.log("Unkown message.")
+		console.log("Unkown response.")
 	}
 }
 
+
+function setPosition(milliseconds) {
+	console.log("set position")
+    stompClient.send(
+    		"/app/player/action", {}, JSON.stringify({ 
+    			type: 'setPosition',
+    			properties: {
+    				position: milliseconds
+    			}
+    		}));
+}
+
+function setSpeed(speed) {
+	console.log("set speed")
+    stompClient.send(
+    		"/app/player/action", {}, JSON.stringify({ 
+    			type: 'setSpeed',
+    			properties: {
+    				speed: speed
+    			}
+    		}));
+}
+
+function setPitch(pitch) {
+	console.log("set pitch")
+    stompClient.send(
+    		"/app/player/action", {}, JSON.stringify({ 
+    			type: 'setPitch',
+    			properties: {
+    				pitch: pitch
+    			}
+    		}));
+}
+
+function positionChanged(heartbeat) {
+	d3.select(".focus").attr("transform", 'translate(' + x(heartbeat.content.position) + ',0)')
+}
+function speedChanged(heartbeat) {
+	if (!speedInteraction)
+		$("#speed input").val(heartbeat.content.speed)
+}
+function pitchChanged(heartbeat) {
+	if (!pitchInteraction)
+		$("#pitch input").val(heartbeat.content.pitch)
+}
+
+
+function handleEvent(content) {
+	if (!content.type.localeCompare('heartbeat')) {
+		console.log(content)
+		positionChanged(content)
+		speedChanged(content)
+		pitchChanged(content)
+	}
+}
+
+pitchInteraction = false
+speedInteraction = false
 $(function () {
 	connect()
     $( "#play" ).click(function() { play(); })
     $( "#pause" ).click(function() { pause(); })
     $( "#stop" ).click(function() { stop(); })
     
+    // set and reset speed
     $( "#speed span" ).click(function() { 
     	$("#speed input").val("1")
     	console.log("set speed: " + speed)
     	setSpeed(1); 
     })
+    $( "#speed input" ).on("mousedown", function() { 
+    	speedInteraction = true
+    })
     $( "#speed input" ).change(function() { 
     	var speed = $(this).val()
     	console.log("set speed: " + speed)
     	setSpeed(parseFloat(speed)); 
+    	speedInteraction = false
     })
     
+    // set and reset pitch
     $( "#pitch span" ).click(function() { 
     	$("#pitch input").val("1")
     	console.log("set pitch: " + pitch)
     	setPitch(1); 
     })
-    $( "#pitch input" ).change(function() { 
+    $( "#pitch input" ).on("mousedown", function() { 
+    	pitchInteraction = true
+    })
+    $( "#pitch input" ).on("mouseup", function() { 
     	var pitch = $(this).val()
     	console.log("set pitch: " + pitch)
     	setPitch(parseFloat(pitch)); 
+    	pitchInteraction = false
     })
 });

@@ -1,11 +1,11 @@
 package net.mgbckr.tiptoe.api.model;
 
-public class Message {
+public class Response {
 
 	private String type;
 	private Object content;
 	
-	public Message(String type, Object message) {
+	public Response(String type, Object message) {
 		this.type = type;
 		this.content = message;
 	}
