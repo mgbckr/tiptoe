@@ -49,7 +49,7 @@ function library(message) {
 					'<td>' + song.title + '</td>' +
 					'<td>' + song.artist + '</td>' +
 					'<td>' + song.album + '</td>' +
-					'<td class="load">Load</td>' +
+					'<td class="controls"><span class="load glyphicon glyphicon-play-circle"></span> <span class="glyphicon glyphicon-list"></span></td>' +
 				'</tr>')
 			
 			row.find(".load").on("click", function() {
@@ -349,9 +349,9 @@ pitchInteraction = false
 speedInteraction = false
 $(function () {
 	connect()
-    $( "#play" ).click(function() { play(); })
-    $( "#pause" ).click(function() { pause(); })
-    $( "#stop" ).click(function() { stop(); })
+    $( "#player .controls .play" ).click(function() { play(); })
+    $( "#player .controls .pause" ).click(function() { pause(); })
+    $( "#player .controls .stop" ).click(function() { stop(); })
     
     // set and reset speed
     $( "#speed span" ).click(function() { 

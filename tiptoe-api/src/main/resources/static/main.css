@@ -1,5 +1,9 @@
-#player div {
+#player div, #playlist div {
 	display: inline-block;
+}
+
+#player .controls, #playlist .controls {
+	vertical-align: text-bottom;
 }
 
 #player input {
