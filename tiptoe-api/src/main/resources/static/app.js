@@ -16,7 +16,8 @@ function connect() {
         	player(JSON.parse(response.body));
         });
 
-    	initLibrary()
+        stompClient.send("/app/player/status");
+    	stompClient.send("/app/library", {}, "{}");
     });
 }
 
@@ -25,10 +26,6 @@ function disconnect() {
         stompClient.disconnect();
     }
     console.log("Disconnected");
-}
-
-function initLibrary() {
-	stompClient.send("/app/library", {}, "{}");
 }
 
 function library(message) {	
@@ -257,15 +254,13 @@ function plot(length, wave) {
 
 function player(response) {
 	
-	function loaded(info) {
-		console.log('loaded')
-		plot(info.length, info.wave)
-	}
-	
 	console.log("Received player message:")
 	console.log(response);
 	
-	if (!response.type.localeCompare('loaded')) {
+	if (!response.type.localeCompare('status')) {
+		console.log('Recognized "status" message.')
+		initPlayer(response.content)
+	} else if (!response.type.localeCompare('loaded')) {
 		console.log('Recognized "loaded" message.')
 		loaded(response.content)
 	} else if (!response.type.localeCompare('setPitch')) {
@@ -285,6 +280,16 @@ function player(response) {
 	}
 }
 
+function initPlayer(status) {
+	if (status) {
+		loaded(status.song)
+	}
+}
+
+function loaded(song) {
+	console.log('loaded')
+	plot(song.length, song.wave)
+}
 
 function setPosition(milliseconds) {
 	console.log("set position")
@@ -330,7 +335,6 @@ function pitchChanged(heartbeat) {
 	if (!pitchInteraction)
 		$("#pitch input").val(heartbeat.content.pitch)
 }
-
 
 function handleEvent(content) {
 	if (!content.type.localeCompare('heartbeat')) {

@@ -11,6 +11,10 @@ public interface Player<TSongInfo, TPlayerStatus> extends Observable {
 	void pause();
 	void stop();
 	
+	default TSongInfo getSongInfo() {
+		return null;
+	}
+	
 	default TPlayerStatus getPlayerStatus() {
 		return null;
 	};

@@ -30,14 +30,13 @@ public class BeadsPlayer
 	
 	protected AudioContext ac;
 	protected SamplePlayer player;
+	protected SongInfo songInfo;
 	
 	protected EventListener listener;
 	
 	public BeadsPlayer() {
-		
 		this.ac = new AudioContext();
 		this.ac.start();
-		
 	}
 	
 	@Override
@@ -91,7 +90,8 @@ public class BeadsPlayer
 		if (oldPlayer != null)
 			oldPlayer.kill();
 		
-		return getSongInfo();
+		this.songInfo = calculateSongInfo();
+		return this.songInfo;
 	}
 
 	@Override
@@ -140,7 +140,33 @@ public class BeadsPlayer
 		this.player.setPitch(new Glide(this.ac, (float) pitch)); 
 	}
 	
-	public SongInfo getSongInfo() {
+	@Override
+	public PlayerStatus getPlayerStatus() {
+		
+		if (this.player == null) {
+			
+			return null;
+			
+		} else {
+		
+			PlayerStatus status = new PlayerStatus();
+			status.setPlaying(this.player != null && !this.player.isPaused());
+			status.setPosition(this.player.getPosition());
+			status.setSpeed(this.getSpeed());
+			status.setPitch(this.getPitch());
+			status.setSong(this.songInfo);
+			return status;
+			
+		}
+	}
+	
+	public SongInfo geSongInfo() {
+		return this.songInfo;
+	}
+	
+	public SongInfo calculateSongInfo() {
+		
+		if (this.player == null) return null;
 		
 		SongInfo info = new SongInfo();
 		
@@ -193,6 +219,44 @@ public class BeadsPlayer
 	}
 	
 	public static class PlayerStatus {
+		
+		private boolean playing;
+		private double position;
+		private double speed;
+		private double pitch;
+		private SongInfo song;
+		
+		public boolean isPlaying() {
+			return playing;
+		}
+		public void setPlaying(boolean playing) {
+			this.playing = playing;
+		}
+		public double getPosition() {
+			return position;
+		}
+		public void setPosition(double position) {
+			this.position = position;
+		}
+		public double getSpeed() {
+			return speed;
+		}
+		public void setSpeed(double speed) {
+			this.speed = speed;
+		}
+		public double getPitch() {
+			return pitch;
+		}
+		public void setPitch(double pitch) {
+			this.pitch = pitch;
+		}
+		public SongInfo getSong() {
+			return song;
+		}
+		public void setSong(SongInfo song) {
+			this.song = song;
+		}
+		
 	}
 
 	public static void main(String[] args) throws InterruptedException {

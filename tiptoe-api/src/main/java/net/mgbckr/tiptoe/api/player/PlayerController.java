@@ -23,10 +23,10 @@ public class PlayerController {
 	@Autowired
 	private Library library;
 	
-	@MessageMapping("/player/info")
+	@MessageMapping("/player/status")
     @SendTo("/topic/player")
     public Response info() throws Exception {
-		return new Response("info", this.player.getPlayerStatus());
+		return new Response("status", this.player.getPlayerStatus());
     }
 	
 	@MessageMapping("/player/load")
