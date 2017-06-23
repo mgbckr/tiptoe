@@ -49,7 +49,7 @@ function library(message) {
 					'<td>' + song.title + '</td>' +
 					'<td>' + song.artist + '</td>' +
 					'<td>' + song.album + '</td>' +
-					'<td class="controls"><span class="load glyphicon glyphicon-play-circle"></span> <span class="glyphicon glyphicon-list"></span></td>' +
+					'<td class="controls"><span class="glyphicon glyphicon-list"></span> <span class="load glyphicon glyphicon-play-circle"></span></td>' +
 				'</tr>')
 			
 			row.find(".load").on("click", function() {

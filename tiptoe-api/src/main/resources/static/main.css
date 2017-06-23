@@ -3,6 +3,7 @@
 }
 
 #player .controls, #playlist .controls {
+	margin-left: 10px;
 	vertical-align: text-bottom;
 }
 
