@@ -34,12 +34,9 @@ public class BeadsPlayer
 	
 	protected EventListener listener;
 	
-	protected boolean looping;
-	
 	public BeadsPlayer() {
 		this.ac = new AudioContext();
 		this.ac.start();
-		this.looping = false;
 	}
 	
 	@Override
@@ -67,11 +64,7 @@ public class BeadsPlayer
 				heartbeat.setSpeed(getSpeed());
 				heartbeat.setPitch(getPitch());
 				
-				if (BeadsPlayer.this.looping) {
-					BeadsPlayer.this.setPosition(0);
-				} else {
-					stop();
-				}
+				stop();
 				
 				Event e = new Event("songEnded", heartbeat);
 				BeadsPlayer.this.listener.notify(e);
@@ -97,7 +90,6 @@ public class BeadsPlayer
 				heartbeat.setPosition(getPosition());
 				heartbeat.setSpeed(getSpeed());
 				heartbeat.setPitch(getPitch());
-				heartbeat.setLooping(isLooping());
 				Event e = new Event("heartbeat", heartbeat);
 				BeadsPlayer.this.listener.notify(e);
 			}
@@ -114,18 +106,23 @@ public class BeadsPlayer
 
 	@Override
 	public void play() {
-		this.player.pause(false);
+		if (this.player != null)
+			this.player.pause(false);
 	}
 	
 	@Override
 	public void stop() {
-		this.player.pause(true);
-		this.player.setPosition(0);
+		if (this.player != null) {
+			this.player.pause(true);
+			this.player.setPosition(0);
+		}
 	}
 
 	@Override
 	public void pause() {
-		this.player.pause(true);
+		if (this.player != null) {
+			this.player.pause(true);
+		}
 	}
 	
 	@Override
@@ -176,14 +173,6 @@ public class BeadsPlayer
 		}
 	}
 	
-	public boolean isLooping() {
-		return this.looping;
-	}
-	
-	public void setLooping(boolean loop) {
-		this.looping = loop;
-	}
-	
 	@Override
 	public PlayerStatus getPlayerStatus() {
 		
@@ -198,7 +187,6 @@ public class BeadsPlayer
 			status.setPosition(this.player.getPosition());
 			status.setSpeed(this.getSpeed());
 			status.setPitch(this.getPitch());
-			status.setLooping(this.isLooping());
 			status.setSong(this.songInfo);
 			return status;
 			
@@ -269,7 +257,6 @@ public class BeadsPlayer
 		private double position;
 		private double speed;
 		private double pitch;
-		private boolean looping;
 		private SongInfo song;
 		
 		public boolean isPlaying() {
@@ -301,12 +288,6 @@ public class BeadsPlayer
 		}
 		public void setSong(SongInfo song) {
 			this.song = song;
-		}
-		public boolean isLooping() {
-			return looping;
-		}
-		public void setLooping(boolean looping) {
-			this.looping = looping;
 		}
 		
 	}

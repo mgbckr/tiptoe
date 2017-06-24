@@ -16,12 +16,10 @@ public interface InteractiveAdvancedPlayer<TSongInfo, TPlayerInfo>
 	public static final String COMMAND_GET_POSITION = "getPosition";
 	public static final String COMMAND_GET_SPEED = "getSpeed";
 	public static final String COMMAND_GET_PITCH = "getPitch";
-	public static final String COMMAND_IS_LOOPING = "isLooping";
 	
 	public static final String COMMAND_SET_POSITION = "setPosition";
 	public static final String COMMAND_SET_SPEED = "setSpeed";
 	public static final String COMMAND_SET_PITCH = "setPitch";
-	public static final String COMMAND_SET_LOOPING = "setLooping";
 	
 	default Object request(Action action) 
 			throws OperationNotSupportedException {
@@ -34,21 +32,16 @@ public interface InteractiveAdvancedPlayer<TSongInfo, TPlayerInfo>
 			return this.getSpeed();
 		case COMMAND_GET_PITCH:
 			return this.getPitch();
-		case COMMAND_IS_LOOPING:
-			return this.isLooping();
 			
 		case COMMAND_SET_POSITION:
 			this.setPosition(action.retrieveDouble("position"));
-			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch(), this.isLooping());
+			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch());
 		case COMMAND_SET_SPEED:
 			this.setSpeed(action.retrieveDouble("speed"));
-			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch(), this.isLooping());
+			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch());
 		case COMMAND_SET_PITCH:
 			this.setPitch(action.retrieveDouble("pitch"));
-			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch(), this.isLooping());
-		case COMMAND_SET_LOOPING:
-			this.setLooping(action.retrieveBoolean("looping"));
-			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch(), this.isLooping());
+			return new AdvancedInfo(this.getPosition(), this.getSpeed(), this.getPitch());
 		
 		default:
 			return InteractivePlayer.super.request(action);
@@ -60,13 +53,11 @@ public interface InteractiveAdvancedPlayer<TSongInfo, TPlayerInfo>
 		private double position;
 		private double speed;
 		private double pitch;
-		private boolean looping;
 		
-		public AdvancedInfo(double position, double speed, double pitch, boolean looping) {
+		public AdvancedInfo(double position, double speed, double pitch) {
 			this.position = position;
 			this.speed = speed;
 			this.pitch = pitch;
-			this.looping = looping;
 		}
 
 		public double getPosition() {
@@ -93,13 +84,6 @@ public interface InteractiveAdvancedPlayer<TSongInfo, TPlayerInfo>
 			this.pitch = pitch;
 		}
 		
-		public boolean isLooping() {
-			return looping;
-		}
-		
-		public void setLooping(boolean looping) {
-			this.looping = looping;
-		}
 	}
 	
 	public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {

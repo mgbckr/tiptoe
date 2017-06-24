@@ -15,8 +15,13 @@ function connect() {
         stompClient.subscribe('/topic/player', function (response) {
         	player(JSON.parse(response.body));
         });
+        
+        stompClient.subscribe('/topic/frontend', function (response) {
+        	frontend(JSON.parse(response.body));
+        });
 
         stompClient.send("/app/player/status");
+        stompClient.send("/app/frontend", {}, "{}");
     	stompClient.send("/app/library", {}, "{}");
     });
 }
@@ -26,6 +31,22 @@ function disconnect() {
         stompClient.disconnect();
     }
     console.log("Disconnected");
+}
+
+function frontend(message) {
+	console.log("Received frontend message:")
+	console.log(message)
+	
+	if (message.content.looping !== undefined)
+		loopingChanged(message.content.looping)
+}
+
+function setLooping(looping) {
+	console.log("set looping")
+    stompClient.send(
+    		"/app/frontend", {}, JSON.stringify({ 
+    			looping: looping
+    		}));
 }
 
 function library(message) {	
@@ -84,6 +105,41 @@ function library(message) {
 	}
 }
 
+function player(response) {
+	
+	console.log("Received player message:")
+	console.log(response);
+	
+	if (!response.type.localeCompare('status')) {
+		console.log('Recognized "status" message.')
+		initPlayer(response.content)
+	} else if (!response.type.localeCompare('loaded')) {
+		console.log('Recognized "loaded" message.')
+		loaded(response.content)
+	} else if (!response.type.localeCompare('setPitch')) {
+		console.log('Recognized "pitchChanged" message.')
+//		pitchChanged(response.content)
+	} else if (!response.type.localeCompare('setSpeed')) {
+		console.log('Recognized "speedChanged" message.')
+//		speedChanged(response.content)
+	} else if (!response.type.localeCompare('setPosition')) {
+		console.log('Recognized "positionChanged" message.')
+//		positionChanged(response.content)
+	} else if (!response.type.localeCompare('event')) {
+		console.log('Recognized "event" message.')
+		handleEvent(response.content)
+	} else {
+		console.log("Unkown response.")
+	}
+}
+
+function initPlayer(status) {
+	if (status) {
+		loaded(status.song)
+	}
+}
+
+
 function load(songId) {
     stompClient.send(
 		"/app/player/load", 
@@ -108,6 +164,12 @@ function pause() {
 	console.log("pause")
     stompClient.send(
     		"/app/player/pause");
+}
+
+function songEnded(content) {
+	if (isLooping(looping)) {
+		start()
+	}
 }
 
 var x = function() { return 0; };
@@ -265,43 +327,6 @@ function plot(length, wave) {
 	
 }
 
-function player(response) {
-	
-	console.log("Received player message:")
-	console.log(response);
-	
-	if (!response.type.localeCompare('status')) {
-		console.log('Recognized "status" message.')
-		initPlayer(response.content)
-	} else if (!response.type.localeCompare('loaded')) {
-		console.log('Recognized "loaded" message.')
-		loaded(response.content)
-	} else if (!response.type.localeCompare('setPitch')) {
-		console.log('Recognized "pitchChanged" message.')
-//		pitchChanged(response.content)
-	} else if (!response.type.localeCompare('setSpeed')) {
-		console.log('Recognized "speedChanged" message.')
-//		speedChanged(response.content)
-	} else if (!response.type.localeCompare('setPosition')) {
-		console.log('Recognized "positionChanged" message.')
-//		positionChanged(response.content)
-	} else if (!response.type.localeCompare('setLooping')) {
-		console.log('Recognized "setLooping" message.')
-		loopingChanged(response)
-	}else if (!response.type.localeCompare('event')) {
-		console.log('Recognized "event" message.')
-		handleEvent(response.content)
-	} else {
-		console.log("Unkown response.")
-	}
-}
-
-function initPlayer(status) {
-	if (status) {
-		loaded(status.song)
-	}
-}
-
 function loaded(song) {
 	console.log('loaded')
 	plot(song.length, song.wave)
@@ -340,17 +365,6 @@ function setPitch(pitch) {
     		}));
 }
 
-function setLooping(looping) {
-	console.log("set looping")
-    stompClient.send(
-    		"/app/player/action", {}, JSON.stringify({ 
-    			type: 'setLooping',
-    			properties: {
-    				looping: looping
-    			}
-    		}));
-}
-
 function positionChanged(heartbeat) {
 	d3.select(".focus").attr("transform", 'translate(' + x(heartbeat.content.position) + ',0)')
 }
@@ -362,9 +376,12 @@ function pitchChanged(heartbeat) {
 	if (!pitchInteraction)
 		$("#pitch input").val(heartbeat.content.pitch)
 }
-function loopingChanged(heartbeat) {
-	console.log(heartbeat.content.looping)
-	$("#player .controls .loop").toggleClass("active", heartbeat.content.looping)
+function loopingChanged(looping) {
+	console.log(looping)
+	$("#player .controls .loop").toggleClass("active", looping)
+}
+function isLooping() {
+	return $("#player .controls .loop").hasClass("active")
 }
 
 function handleEvent(content) {
@@ -373,7 +390,12 @@ function handleEvent(content) {
 		positionChanged(content)
 		speedChanged(content)
 		pitchChanged(content)
-		loopingChanged(content)
+	} else if (!content.type.localeCompare('songEnded')) {
+		console.log("TEST")
+		if (isLooping()) {
+			console.log("TEST2")
+			play()
+		}
 	}
 }
 

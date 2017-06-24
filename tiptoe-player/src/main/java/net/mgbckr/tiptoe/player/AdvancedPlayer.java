@@ -28,7 +28,4 @@ public interface AdvancedPlayer<TSongInfo, TPlayerStatus>
 	default void setPitch(double rate) {
 		this.setPitch(rate, true);
 	}
-	
-	boolean isLooping();
-	void setLooping(boolean looping);
 }
