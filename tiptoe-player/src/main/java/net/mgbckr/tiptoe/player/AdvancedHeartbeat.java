@@ -6,6 +6,7 @@ public class AdvancedHeartbeat {
 	private double position;
 	private double speed;
 	private double pitch;
+	private boolean looping;
 	
 	public boolean isPlaying() {
 		return playing;
@@ -30,6 +31,12 @@ public class AdvancedHeartbeat {
 	}
 	public void setPitch(double pitch) {
 		this.pitch = pitch;
+	}
+	public boolean isLooping() {
+		return looping;
+	}
+	public void setLooping(boolean looping) {
+		this.looping = looping;
 	}
 	
 }

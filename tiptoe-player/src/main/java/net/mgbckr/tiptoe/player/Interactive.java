@@ -36,7 +36,10 @@ public interface Interactive {
 		
 		public void setProperties(Map<String, Object> properties) {
 			for (Object o : properties.values()) {
-				if (!(o instanceof String) && !(o instanceof Integer) && !(o instanceof Double)) {
+				if (!(o instanceof String) 
+						&& !(o instanceof Integer) 
+						&& !(o instanceof Double) 
+						&& !(o instanceof Boolean)) {
 					throw new IllegalArgumentException("Values must be Strings or Doubles.");
 				}
 			}
@@ -52,6 +55,11 @@ public interface Interactive {
 		}
 		
 		public void put(String key, double value) {
+			this.properties.put(key, value);
+		}
+		
+
+		public void put(String key, boolean value) {
 			this.properties.put(key, value);
 		}
 		
@@ -76,6 +84,10 @@ public interface Interactive {
 			} else {
 				return (double) this.properties.get(key);
 			}
+		}
+		
+		public boolean retrieveBoolean(String key) {
+			return (Boolean) this.properties.get(key);
 		}
 	}
 }

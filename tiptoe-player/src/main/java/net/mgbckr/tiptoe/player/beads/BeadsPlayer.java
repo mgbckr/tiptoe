@@ -34,9 +34,12 @@ public class BeadsPlayer
 	
 	protected EventListener listener;
 	
+	protected boolean looping;
+	
 	public BeadsPlayer() {
 		this.ac = new AudioContext();
 		this.ac.start();
+		this.looping = false;
 	}
 	
 	@Override
@@ -57,7 +60,21 @@ public class BeadsPlayer
 		this.player.setEndListener(new Bead() {
 			@Override
 			protected void messageReceived(Bead message) {
-				stop();
+				
+				AdvancedHeartbeat heartbeat = new AdvancedHeartbeat();
+				heartbeat.setPlaying(!player.isPaused());
+				heartbeat.setPosition(getPosition());
+				heartbeat.setSpeed(getSpeed());
+				heartbeat.setPitch(getPitch());
+				
+				if (BeadsPlayer.this.looping) {
+					BeadsPlayer.this.setPosition(0);
+				} else {
+					stop();
+				}
+				
+				Event e = new Event("songEnded", heartbeat);
+				BeadsPlayer.this.listener.notify(e);
 			}
 		});
 		if (oldPlayer == null) {
@@ -80,6 +97,7 @@ public class BeadsPlayer
 				heartbeat.setPosition(getPosition());
 				heartbeat.setSpeed(getSpeed());
 				heartbeat.setPitch(getPitch());
+				heartbeat.setLooping(isLooping());
 				Event e = new Event("heartbeat", heartbeat);
 				BeadsPlayer.this.listener.notify(e);
 			}
@@ -112,32 +130,58 @@ public class BeadsPlayer
 	
 	@Override
 	public double getPosition() {
-		return this.player.getPosition();
+		if (this.player == null) {
+			return -1;
+		} else {
+			return this.player.getPosition();
+		}
 	}
 	
 	@Override
 	public void setPosition(double milliseconds) {
-		this.player.setPosition(milliseconds);
+		if (this.player != null) {
+			this.player.setPosition(milliseconds);
+		}
 	}
 	
 	@Override
 	public double getSpeed() {
-		return this.player.getRateUGen().getValueDouble();
+		if (this.player == null) {
+			return 1;
+		} else {
+			return this.player.getRateUGen().getValueDouble();
+		}
 	}
 	
 	@Override
 	public void setSpeed(double rate, boolean tryToKeepPitch) {
-		this.player.setRate(new Static(this.ac, (float) rate));
+		if (this.player != null) {
+			this.player.setRate(new Static(this.ac, (float) rate));
+		} 
 	}
 	
 	@Override
 	public double getPitch() {
-		return this.player.getPitchUGen().getValueDouble();
+		if (this.player == null) {
+			return 1;
+		} else {
+			return this.player.getPitchUGen().getValueDouble();
+		}
 	}
 	
 	@Override
 	public void setPitch(double pitch, boolean tryToKeepSpeed) {
-		this.player.setPitch(new Glide(this.ac, (float) pitch)); 
+		if (this.player != null) {
+			this.player.setPitch(new Glide(this.ac, (float) pitch)); 
+		}
+	}
+	
+	public boolean isLooping() {
+		return this.looping;
+	}
+	
+	public void setLooping(boolean loop) {
+		this.looping = loop;
 	}
 	
 	@Override
@@ -154,6 +198,7 @@ public class BeadsPlayer
 			status.setPosition(this.player.getPosition());
 			status.setSpeed(this.getSpeed());
 			status.setPitch(this.getPitch());
+			status.setLooping(this.isLooping());
 			status.setSong(this.songInfo);
 			return status;
 			
@@ -224,6 +269,7 @@ public class BeadsPlayer
 		private double position;
 		private double speed;
 		private double pitch;
+		private boolean looping;
 		private SongInfo song;
 		
 		public boolean isPlaying() {
@@ -255,6 +301,12 @@ public class BeadsPlayer
 		}
 		public void setSong(SongInfo song) {
 			this.song = song;
+		}
+		public boolean isLooping() {
+			return looping;
+		}
+		public void setLooping(boolean looping) {
+			this.looping = looping;
 		}
 		
 	}

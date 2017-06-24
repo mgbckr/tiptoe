@@ -46,12 +46,25 @@ function library(message) {
 			
 			var row = $(
 				'<tr class="song" data-id="' + song.id + '">' +
-					'<td>' + song.title + '</td>' +
-					'<td>' + song.artist + '</td>' +
-					'<td>' + song.album + '</td>' +
-					'<td class="controls"><span class="glyphicon glyphicon-list"></span> <span class="load glyphicon glyphicon-play-circle"></span></td>' +
+					'<td class="title">' + song.title + '</td>' +
+					'<td class="artist">' + song.artist + '</td>' +
+					'<td class="album">' + song.album + '</td>' +
+					'<td class="controls"><span class="add glyphicon glyphicon-list"></span> <span class="load glyphicon glyphicon-play-circle"></span></td>' +
 				'</tr>')
 			
+			row.find(".add").on("click", function() {
+				var playlistEntry = $(
+					'<tr class="song" data-id="' + song.id + '">' +
+						'<td class="title">' + song.title + '</td>' +
+						'<td class="artist">' + song.artist + '</td>' +
+						'<td class="album">' + song.album + '</td>' +
+						'<td class="controls"><span class="load glyphicon glyphicon-play-circle"></span></td>' +
+					'</tr>')
+				playlistEntry.find(".load").on("click", function() {
+					load(song.id)
+				})
+				$("#playlist-songs").append(playlistEntry)
+			})
 			row.find(".load").on("click", function() {
 				load(song.id)
 			})
@@ -272,7 +285,10 @@ function player(response) {
 	} else if (!response.type.localeCompare('setPosition')) {
 		console.log('Recognized "positionChanged" message.')
 //		positionChanged(response.content)
-	} else if (!response.type.localeCompare('event')) {
+	} else if (!response.type.localeCompare('setLooping')) {
+		console.log('Recognized "setLooping" message.')
+		loopingChanged(response)
+	}else if (!response.type.localeCompare('event')) {
 		console.log('Recognized "event" message.')
 		handleEvent(response.content)
 	} else {
@@ -324,6 +340,17 @@ function setPitch(pitch) {
     		}));
 }
 
+function setLooping(looping) {
+	console.log("set looping")
+    stompClient.send(
+    		"/app/player/action", {}, JSON.stringify({ 
+    			type: 'setLooping',
+    			properties: {
+    				looping: looping
+    			}
+    		}));
+}
+
 function positionChanged(heartbeat) {
 	d3.select(".focus").attr("transform", 'translate(' + x(heartbeat.content.position) + ',0)')
 }
@@ -335,6 +362,10 @@ function pitchChanged(heartbeat) {
 	if (!pitchInteraction)
 		$("#pitch input").val(heartbeat.content.pitch)
 }
+function loopingChanged(heartbeat) {
+	console.log(heartbeat.content.looping)
+	$("#player .controls .loop").toggleClass("active", heartbeat.content.looping)
+}
 
 function handleEvent(content) {
 	if (!content.type.localeCompare('heartbeat')) {
@@ -342,6 +373,7 @@ function handleEvent(content) {
 		positionChanged(content)
 		speedChanged(content)
 		pitchChanged(content)
+		loopingChanged(content)
 	}
 }
 
@@ -352,6 +384,9 @@ $(function () {
     $( "#player .controls .play" ).click(function() { play(); })
     $( "#player .controls .pause" ).click(function() { pause(); })
     $( "#player .controls .stop" ).click(function() { stop(); })
+    $( "#player .controls .loop" ).click(function() { 
+    	setLooping(!$("#player .controls .loop").hasClass("active"))
+    })
     
     // set and reset speed
     $( "#speed span" ).click(function() { 
@@ -384,4 +419,6 @@ $(function () {
     	setPitch(parseFloat(pitch)); 
     	pitchInteraction = false
     })
+    
+    $( "#playlist .controls .clear" ).click(function() { $("#playlist-songs").html("") })
 });

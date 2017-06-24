@@ -55,7 +55,7 @@
                     <th>Name</th>
                     <th>Artist</th>
                     <th>Album</th>
-                    <th><span class="glyphicon glyphicon-list"></span></th>
+                    <th><span class="addall glyphicon glyphicon-list"></span></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -67,17 +67,22 @@
 	       		<div><h1><span class="glyphicon glyphicon-list"></span> Playlist</h1></div>
 	        	<div class="controls">
 	        		<button class="play btn btn-default"><span class="glyphicon glyphicon-play"></span></button>
+	        		<button class="stop disabled btn btn-default"><span class="glyphicon glyphicon-stop"></span></button>
 	        		<button class="random btn btn-default"><span class="glyphicon glyphicon-random"></span></button>
 	        		<button class="loop btn btn-default"><span class="glyphicon glyphicon-retweet"></span></button>
 	        		<button class="search btn btn-default"><span class="glyphicon glyphicon-folder-open"></span></button>
 	        		<button class="save btn btn-default"><span class="glyphicon glyphicon-save"></span></button>
+	        		<button class="clear btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
 	        	</div>
+	        	<br/>
+	        	<div class="name" style="width: 100%"><input type="text" placeholder="Playlist name: default playlist" style="width: 100%; padding-left: 5px;"></input></div>
 	            <table id="playlist" class="table table-striped">
 	                <thead>
 	                <tr>
 	                    <th>Name</th>
 	                    <th>Artist</th>
 	                    <th>Album</th>
+	                    <th></th>
 	                </tr>
 	                </thead>
 	                <tbody id="playlist-songs">
